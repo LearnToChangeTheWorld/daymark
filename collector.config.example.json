@@ -1,0 +1,11 @@
+{
+  "name": "我的 Windows 电脑",
+  "serverUrl": "http://localhost:4317",
+  "keyFile": "collector.key",
+  "dataDir": "collector-data",
+  "qq": {
+    "port": 4318,
+    "groups": [],
+    "secret": ""
+  }
+}

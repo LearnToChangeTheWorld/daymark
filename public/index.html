@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#ffffff">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Daymark">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <title>Daymark · 个人事项工作台</title>
+  <link rel="manifest" href="/manifest.webmanifest">
+  <link rel="stylesheet" href="/vendor/tabler/tabler.min.css">
+  <link rel="stylesheet" href="/styles.css">
+  <link rel="stylesheet" href="/workspace.css">
+  <script src="/app.js" defer></script>
+  <script src="/chat.js" defer></script>
+</head>
+<body>
+  <div class="app-frame">
+    <aside class="sidebar">
+      <a class="brand" href="#tasks" aria-label="Daymark首页"><span class="brand-mark">D</span><span>Daymark</span></a>
+      <div class="side-label">我的事项</div>
+      <nav class="main-nav" aria-label="主导航">
+        <button class="nav-item active" data-view="tasks"><svg viewBox="0 0 24 24"><path d="m3 6 2 2 4-4m-6 9 2 2 4-4M13 6h8M13 13h8M5 20h16"/></svg><span>待办</span><b id="pendingCount"></b></button>
+        <button class="nav-item" data-view="review"><svg viewBox="0 0 24 24"><path d="M9 3h6l1 3h4v15H4V6h4l1-3Z"/><path d="M9 12h6M9 16h3"/></svg><span>待确认</span><b id="reviewCount"></b></button>
+        <button class="nav-item" data-view="notices"><svg viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></svg><span>通知</span></button>
+        <button class="nav-item" data-view="records"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="5" rx="1"/><path d="M5 9v12h14V9M10 13h4"/></svg><span>记录</span></button>
+      </nav>
+      <div class="side-label sources-label">信息来源</div>
+      <div class="source-nav" id="sourceNav">
+        <button class="source-connect" type="button" data-connect-chat="wechat"><i class="source-dot red"></i>微信 <span>管理</span></button>
+        <button class="source-connect" type="button" data-connect-chat="qq"><i class="source-dot blue"></i>QQ <span>管理</span></button>
+        <button class="source-connect" type="button" data-connect-chaoxing><i class="source-dot orange"></i>学习通 <span>连接 ›</span></button>
+        <span data-source="rainclass"><i class="source-dot teal"></i>雨课堂</span>
+        <span data-source="csu"><i class="source-dot green"></i>中南教务</span>
+      </div>
+      <div class="sidebar-foot"><span class="server-pulse" id="serverPulse"></span><span id="serverLabel">正在连接事项服务</span><button id="settingsBtn" class="icon-button" title="设置" aria-label="设置"><svg viewBox="0 0 24 24"><path d="M4 7h4m4 0h8M4 17h8m4 0h4"/><circle cx="10" cy="7" r="2"/><circle cx="14" cy="17" r="2"/></svg></button></div>
+    </aside>
+    <main class="main-area">
+      <header class="topbar">
+        <div><div class="eyebrow" id="dateLabel"></div><h1 id="pageTitle">待办</h1><p id="pageDescription"></p></div>
+        <div class="top-actions"><span class="sync-status" id="syncStatus">尚未连接</span><button class="secondary-button" id="connectSourcesBtn" type="button">接入账号</button><button class="icon-button" id="mobileSettingsBtn" title="连接与来源" aria-label="连接与来源"><svg viewBox="0 0 24 24"><path d="M4 7h4m4 0h8M4 17h8m4 0h4"/><circle cx="10" cy="7" r="2"/><circle cx="14" cy="17" r="2"/></svg></button><button class="add-button" id="addButton"><span>＋</span>记一条</button></div>
+      </header>
+      <div class="content">
+        <section class="overview-strip" aria-label="事项概览" hidden>
+          <div><span class="metric-label">未完成待办</span><strong id="metricPending">0</strong></div>
+          <div><span class="metric-label">今天到期</span><strong id="metricToday">0</strong></div>
+          <div><span class="metric-label">正常采集</span><strong class="source-summary" id="metricSources">0 / 5</strong></div>
+          <div class="last-update"><span class="metric-label">最近采集</span><strong id="lastSync">尚未采集</strong></div>
+        </section>
+        <div class="collector-notice" id="collectorNotice" role="status">正在检查采集端状态…</div>
+        <div class="operation-notice" id="operationNotice" role="status" hidden><div><strong id="operationTitle"></strong><p id="operationDescription"></p></div><button class="secondary-button" type="button" data-connect-chaoxing>查看详情</button><button class="icon-button" type="button" id="dismissOperation" aria-label="关闭同步结果">×</button></div>
+        <div class="triage-notice" id="triageNotice" hidden><p id="triageSummary"></p><button class="action-button" type="button" id="reviewCandidates">去确认 →</button><button class="action-button" type="button" id="showAttachments">核对附件</button></div>
+        <section class="followup-panel" id="followupPanel" aria-labelledby="followupTitle" hidden>
+          <div class="followup-heading"><h2 id="followupTitle">待办跟进</h2><button class="action-button" type="button" id="followupAll">查看全部待办</button></div>
+          <p id="followupSummary"></p>
+          <div id="followupItems"></div>
+          <small>未完成的待办持续保留，标为已读不会结束跟进。关闭网页后的自动推送尚未接通。</small>
+        </section>
+        <section class="inbox-workspace" id="inboxView">
+          <div class="list-toolbar">
+            <div class="filter-tabs" role="tablist" aria-label="事项筛选">
+              <button class="filter-tab active" data-filter="all">全部</button>
+              <button class="filter-tab" data-filter="done">已完成</button>
+              <button class="filter-tab" data-filter="other">其他内容</button>
+              <button class="filter-tab" data-filter="archived">已归档</button>
+            </div>
+            <span id="rawMessagesLabel" hidden>保留已采集的群聊原文</span><button class="secondary-button bulk-toggle" id="bulkToggle" type="button" hidden>批量归档</button><label class="search-box"><svg viewBox="0 0 24 24"><circle cx="10.8" cy="10.8" r="6.8"/><path d="m16 16 5 5"/></svg><input id="searchInput" type="search" aria-label="搜索事项" placeholder="搜索事项"></label>
+          </div>
+          <div class="time-filter" id="timeFilter"><label><span class="visually-hidden">发布时间范围</span><select id="noticeRange" class="form-select form-select-sm"><option value="7">近 7 天</option><option value="30">近 30 天</option><option value="all">全部时间</option></select></label><select id="topicFilter" class="form-select form-select-sm" aria-label="通知主题"><option value="all">所有主题</option><option>作业提交</option><option>考试考务</option><option>课程安排</option><option>报名材料</option><option>其他</option></select><span id="noticeRangeNote"></span></div>
+          <div class="raw-context" id="rawContext" hidden><span id="rawContextLabel"></span><button class="action-button" type="button" id="clearRawContext">查看全部群消息</button></div>
+          <div class="section-caption"><span id="listCaption">待处理事项</span><span id="resultCount">0 项</span></div>
+          <div class="bulk-toolbar" id="bulkToolbar" hidden aria-label="批量操作"><label class="bulk-all"><input id="bulkSelectAll" type="checkbox">全选当前结果</label><span id="bulkCount" role="status">已选 0 条</span><button class="add-button" id="bulkApply" type="button" disabled>归档所选</button></div>
+          <div class="bulk-result" id="bulkResult" role="status" aria-live="polite" hidden><span id="bulkResultText"></span><button class="icon-button" id="bulkResultClose" type="button" aria-label="关闭批量操作提示">×</button></div>
+          <div id="itemList" class="item-list"></div>
+        </section>
+        <section class="tasks-view hidden" id="tasksView"></section>
+      </div>
+    </main>
+  </div>
+  <dialog id="itemDialog">
+    <form id="itemForm" method="dialog">
+      <div class="dialog-head"><div><span class="eyebrow" id="itemFormEyebrow">新事项</span><h2 id="itemFormTitle">记下，不要漏掉</h2></div><button class="icon-button" type="button" data-close aria-label="关闭">×</button></div>
+      <label class="form-field">标题<input name="title" required maxlength="160" placeholder="要记住什么？"></label>
+      <label class="form-field">原文或备注<textarea name="body" rows="3" maxlength="12000" placeholder="保留通知原文或补充信息"></textarea></label>
+      <input type="hidden" name="category" value="unclassified"><label class="form-field">来源<select name="source"><option value="manual">手动记录</option><option value="wechat">微信</option><option value="qq">QQ</option><option value="chaoxing">学习通</option><option value="rainclass">雨课堂</option><option value="csu">中南大学教务</option></select></label>
+      <label class="form-field due-field">截止日期 <span>可留空，未知时间不会被误判</span><input name="due" type="date"></label>
+      <div class="dialog-actions"><button class="secondary-button" type="button" data-close>取消</button><button class="add-button" type="submit">保存事项</button></div>
+    </form>
+  </dialog>
+  <dialog id="detailDialog"><div class="settings-content" id="detailContent"></div></dialog>
+  <dialog id="settingsDialog">
+    <div class="settings-content"><div class="dialog-head"><div><span class="eyebrow" id="serviceMode">仅本机运行</span><h2>连接与来源</h2></div><button class="icon-button" type="button" data-close aria-label="关闭">×</button></div>
+      <p class="settings-intro" id="serviceDescription">事项与账号设置保存在这台电脑，无需服务器或域名。</p>
+      <div class="settings-collector" id="collectorDetails"></div>
+      <div class="settings-sources" id="settingsSources"></div>
+      <div class="settings-note"><strong>关闭网页后的提醒尚未开启</strong><span>网页内会持续显示逾期、今天到期、近 3 天到期及日期待确认的待办；关闭网页后还不会收到自动推送。</span></div>
+      <div class="settings-note"><strong>在 iPhone 上使用</strong><span id="phoneAccessNote">当前版本仅供这台电脑使用，iPhone 暂不能远程访问。网站同步接口已保留，之后可扩展。</span></div>
+      <button class="secondary-button full-button" type="button" data-close>完成</button>
+      <button class="secondary-button full-button" type="button" id="logoutButton">退出此设备</button>
+    </div>
+  </dialog>
+  <dialog id="accountDialog">
+    <div class="settings-content">
+      <div class="dialog-head"><div><span class="eyebrow">信息来源 / 学习通</span><h2 id="accountTitle">连接学习通</h2></div><button class="icon-button" type="button" data-close aria-label="关闭">×</button></div>
+      <div class="account-body">
+      <p class="settings-intro" id="accountIntro">登录后读取课程、未交作业和近 7 天通知。</p>
+      <p id="accountLocalNote" class="settings-note" hidden>请在 Windows 电脑上打开本机网页管理账号。网站模式为未来扩展预留，当前使用本地模式。</p>
+      <div id="accountStatus" class="account-identity" role="status">正在读取连接状态…</div>
+      <div id="accountOutcome" class="account-outcome" role="status" hidden><strong id="accountOutcomeTitle"></strong><p id="accountOutcomeMessage"></p><span id="accountOutcomeTime"></span></div>
+      <div id="accountMetrics" class="account-metrics" hidden></div>
+      <form id="accountForm">
+        <label class="form-field">学习通手机号<input name="phone" type="tel" inputmode="numeric" pattern="[0-9]{11}" maxlength="11" autocomplete="username" required placeholder="用于登录学习通的手机号"></label>
+        <label class="form-field">密码<input name="password" type="password" autocomplete="current-password" maxlength="256" required placeholder="学习通密码"></label>
+        <label class="remember-option"><input name="remember" type="checkbox"> 在这台 Windows 电脑保存账号并自动登录</label>
+        <p class="settings-intro">保存时使用 Windows 账户加密；不保存则仅本次运行有效。需要验证码时会提示重新登录。</p>
+        <button class="add-button full-button" type="submit" id="accountLoginBtn">登录并开始同步</button>
+      </form>
+      <p id="accountError" class="pair-error" role="alert" hidden></p>
+      <div id="accountVerification" class="account-outcome" hidden><strong id="verificationTitle">通过浏览器读取作业</strong><p id="verificationInstructions">1. 在这台 Windows 电脑打开学习通窗口。<br>2. 如有验证码或登录提示，请在此窗口完成。<br>3. 保持窗口打开，回到这里继续同步。</p><button class="secondary-button" type="button" id="accountVerifyBtn">打开学习通验证窗口</button><p id="verificationMessage" role="status"></p></div>
+      <div class="account-actions" id="accountActions" hidden><button class="add-button" type="button" id="accountSyncBtn">立即同步</button><button class="secondary-button" type="button" id="accountReconnectBtn">账号设置</button></div>
+      <p id="accountSaveNote" class="settings-intro"></p>
+      <div id="accountResults"></div>
+      <details id="accountSettings"><summary>账号与保存设置</summary><p id="accountSettingsNote"></p><button class="secondary-button" type="button" id="accountDisconnectBtn">断开并删除保存的账号</button><div id="disconnectConfirm" class="disconnect-confirm" hidden><p>删除这台电脑保存的学习通账号？已采集的通知和待办会保留。</p><button class="danger-button" type="button" id="confirmDisconnectBtn">确认断开</button><button class="secondary-button" type="button" id="cancelDisconnectBtn">取消</button></div></details>
+      </div>
+    </div>
+  </dialog>
+  <dialog id="chatDialog">
+    <div class="settings-content">
+      <div class="dialog-head"><div><span class="eyebrow">信息来源 / 扫码接入</span><h2 id="chatTitle">连接 QQ</h2></div><button class="icon-button" type="button" data-close aria-label="关闭">×</button></div>
+      <div class="account-body">
+        <p class="settings-intro" id="chatIntro"></p>
+        <ol class="chat-steps"><li id="chatLoginStep">扫码登录</li><li id="chatGroupStep">自动识别学习群</li><li id="chatCollectStep">持续采集</li></ol>
+        <div class="account-outcome" id="chatOutcome" role="status" aria-live="polite">
+          <strong id="chatHeadline">尚未登录</strong><p id="chatStatus">请开始扫码登录</p>
+          <p id="chatConnectionResult" class="chat-result" hidden></p>
+          <div id="chatFinishSection" hidden><p>可以返回查看事项了。关闭此窗口后，只要本机服务运行，仍会继续采集新消息。</p><button class="add-button" type="button" id="chatFinish">完成，返回事项</button></div>
+        </div>
+        <section id="chatGroupsSection" hidden>
+          <div class="chat-group-heading"><h3>群聊自动识别</h3><button class="secondary-button" type="button" id="chatLoadGroups">重新识别</button></div>
+          <p class="settings-intro" id="chatGroupNote"></p>
+          <p id="chatSelectionSummary" role="status"></p><details id="chatSelectionDetails"><summary>查看识别结果与纠正</summary><div class="chat-groups" id="chatGroupList"></div></details>
+          <label id="chatManualGroupField" class="form-field" hidden>补充完整群名（每行一个）<textarea id="chatManualGroups" rows="3" placeholder="请填写微信中显示的完整群名"></textarea></label>
+          <button class="secondary-button" type="button" id="chatSaveGroups" hidden>保存连接设置</button>
+          <p id="chatSaved" role="status"></p>
+        </section>
+        <section id="chatHealth" class="chat-health" hidden aria-label="采集检查结果">
+          <dl><div><dt>最近检查</dt><dd id="chatLastChecked">尚未检查</dd></div><div><dt>最近采集到记录</dt><dd id="chatLastMessage">本次运行尚未采集到</dd></div></dl>
+          <details id="chatHealthDetails" hidden><summary>查看逐群读取状态</summary><ul id="chatGroupStatus" hidden></ul></details>
+          <button class="secondary-button" type="button" id="chatCheck">检查采集状态</button>
+          <p id="chatCheckResult" class="chat-result" role="status" hidden></p>
+        </section>
+        <p class="pair-error" id="chatError" role="alert" hidden></p>
+        <section id="chatHistory" class="chat-health" hidden aria-label="历史补读进度">
+          <h3>近 7 天历史补读</h3><p id="chatHistorySummary" role="status"></p>
+          <details><summary>查看补读明细</summary><ul id="chatHistoryGroups"></ul></details>
+          <button class="secondary-button" type="button" id="chatReadHistory">重新补读近 7 天</button>
+        </section>
+        <div id="chatQr" class="chat-qr" hidden><img id="chatQrImage" alt="平台真实登录二维码"><p id="chatQrNote"></p></div>
+        <label class="remember-option"><input id="chatRemember" type="checkbox" checked> 保存连接和群聊设置，下次自动检查连接</label>
+        <p class="settings-intro" id="chatSaveNote"></p>
+        <div class="account-actions" id="chatInitializeSection" hidden><button class="secondary-button" type="button" id="chatInitialize">初始化消息读取（重启一次微信）</button></div>
+        <div class="account-actions"><button class="add-button" type="button" id="chatStart">生成登录二维码</button><button class="secondary-button" type="button" id="chatRefresh" hidden>刷新二维码</button></div>
+        <div id="chatWarnings" class="account-outcome" hidden></div>
+        <button class="secondary-button full-button" type="button" id="chatAcknowledge" hidden>已在微信核对漏读期间的消息，清除提醒</button>
+        <button class="secondary-button full-button" type="button" id="chatDisconnect" hidden>断开本软件采集并取消自动连接</button>
+      </div>
+    </div>
+  </dialog>
+  <dialog id="pairDialog" class="pair-dialog">
+    <form id="pairForm" method="dialog"><div class="pair-mark">D</div><span class="eyebrow">个人事项库</span><h2>输入你的访问码</h2><p>访问码显示在事项服务的启动窗口中。登录后，此设备可保持登录 30 天。</p><label class="form-field">访问码<input name="code" type="password" required autocomplete="current-password" maxlength="64" placeholder="输入访问码"></label><button class="add-button full-button" type="submit">进入事项库</button><p class="pair-error" id="pairError" hidden></p></form>
+  </dialog>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+</body>
+</html>

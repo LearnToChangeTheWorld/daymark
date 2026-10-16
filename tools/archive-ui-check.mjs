@@ -1,0 +1,133 @@
+import { createRequire } from 'node:module';
+import { mkdir } from 'node:fs/promises';
+import assert from 'node:assert/strict';
+const require = createRequire(import.meta.url);
+const { chromium } = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
+const base = process.env.BROWSER_CHECK_URL || 'http://127.0.0.1:4317';
+const now = new Date().toISOString();
+const item = (id, title, extra = {}) => ({ id, title, body: `${title}，保留原文用于核对。`, kind: 'notification', source: 'qq', sourceName: 'QQ · 示例课程群', category: 'academic', relevance: 'learning', createdAt: now, publishedAt: now, read: false, done: false, archived: false, triage: { kind: 'candidate', reason: '适用对象需确认' }, ...extra });
+const items = [item('a1', '申请：有意向的同学提交奖学金材料'), item('a2', '申请：有意向的同学提交竞赛报名材料'), item('a3', '考试：补考同学请核对考场'), item('a4', '旧的已归档通知', { archived: true, publishedAt: '2020-01-01T00:00:00Z' }), item('a5', '待交实验报告', { kind: 'task', due: null, triage: null }), item('a6', '课程安排通知', { source: 'chaoxing', triage: null, body: '课程名称：示例课程\n明天下午的课程调至第三教学楼。', topic: '课程安排' })];
+const original = structuredClone(items);
+const browser = await chromium.launch({ channel: 'msedge', headless: true });
+const context = await browser.newContext({ viewport: { width: 1440, height: 1000 } });
+const page = await context.newPage(), errors = [], bulkCalls = [], patches = [];
+page.on('pageerror', e => errors.push(e.message));
+let failBulk = false;
+await page.route('**/api/state', r => r.fulfill({ json: { items, sources: {}, mode: 'local', localAccountsEnabled: false } }));
+await page.route('**/api/items/*', r => {
+  const id = r.request().url().split('/').at(-1), entry = items.find(i => i.id === id);
+  assert.ok(entry); assert.equal(r.request().method(), 'PATCH');
+  const patch = r.request().postDataJSON(); patches.push({ id, patch }); Object.assign(entry, patch);
+  return r.fulfill({ json: { ok: true } });
+});
+await page.route('**/api/items/archive', r => {
+  const input = r.request().postDataJSON(); bulkCalls.push(input);
+  assert.equal(r.request().method(), 'POST');
+  if (failBulk) return r.fulfill({ status: 500, json: { error: '模拟保存失败，请重试' } });
+  for (const id of input.ids) items.find(i => i.id === id).archived = input.archived;
+  return r.fulfill({ json: { ok: true, ids: input.ids, count: input.ids.length, archived: input.archived } });
+});
+const row = id => page.locator(`#itemList [data-item=${id}]`);
+const nav = view => page.locator(`.main-nav [data-view=${view}]`).click();
+const search = text => page.locator('#searchInput').fill(text);
+const archiveNotice = () => page.locator('#bulkResult[data-status=succeeded]').waitFor();
+try {
+  await page.goto(base); await row('a5').waitFor();
+  await nav('review'); await row('a1').waitFor();
+  assert.deepEqual(await row('a1').locator('.review-actions button').allTextContents(), ['确认', '归档']);
+  const actions = await row('a1').locator('.review-actions button').evaluateAll(els => els.map(el => el.getBoundingClientRect().top));
+  assert.equal(actions[0], actions[1], 'single archive is beside confirm');
+  assert.equal(await page.locator('[data-select-item]').count(), 0, 'normal list stays compact');
+  await mkdir('artifacts', { recursive: true });
+  await page.screenshot({ path: 'artifacts/archive-review-desktop.png', fullPage: true });
+  await row('a1').locator('[data-action=archive]').click();
+  await row('a1').waitFor({ state: 'hidden' });
+  assert.deepEqual(patches.at(-1), { id: 'a1', patch: { archived: true } });
+  assert.deepEqual(items.find(i => i.id === 'a1'), { ...original[0], archived: true });
+  await page.getByText('已归档，可在记录中恢复', { exact: true }).waitFor();
+  await nav('records'); await page.locator('[data-filter=archived]').click();
+  await row('a1').locator('[data-action=details]').click();
+  await page.locator('#detailDialog [data-action=archive]').click();
+  await row('a1').waitFor({ state: 'hidden' });
+  assert.equal(items[0].archived, false);
+
+  await nav('review'); await page.locator('#bulkToggle').click();
+  assert.equal(await page.locator('#bulkApply').isDisabled(), true);
+  await row('a1').locator('[data-select-item]').check();
+  assert.equal(await page.locator('#bulkSelectAll').evaluate(el => el.indeterminate), true);
+  await search('申请');
+  assert.equal(await page.locator('#bulkCount').textContent(), '已选 0 条', 'changing search clears the old selection');
+  await page.locator('#bulkSelectAll').check();
+  assert.equal(await page.locator('#bulkCount').textContent(), '已选 2 条');
+  failBulk = true;
+  await page.locator('#bulkApply').click();
+  await page.locator('#bulkResult[data-status=failed]').waitFor();
+  assert.match(await page.locator('#bulkResultText').textContent(), /批量归档失败.*模拟保存失败/);
+  assert.equal(items[0].archived, false); assert.equal(items[1].archived, false);
+  assert.equal(await page.locator('[data-select-item]:checked').count(), 2, 'failed write keeps selection for retry');
+  failBulk = false;
+  await page.locator('#bulkApply').click(); await archiveNotice();
+  assert.match(await page.locator('#bulkResultText').textContent(), /已归档 2 条/);
+  assert.deepEqual(bulkCalls.at(-1), { ids: ['a1', 'a2'], archived: true });
+  assert.equal(items.find(i => i.id === 'a3').archived, false, 'select all never includes hidden search results');
+  await search(''); await row('a3').waitFor();
+  await page.reload(); await nav('review');
+  assert.equal(await page.locator('#itemList .item-row').count(), 1, 'archived candidates stay hidden after reload');
+  await page.locator('#bulkToggle').click();
+  await row('a3').locator('[data-select-item]').check();
+  items.push(item('a7', '后台新到的学习事项'));
+  await page.evaluate(() => document.dispatchEvent(new Event('visibilitychange')));
+  await row('a7').waitFor();
+  assert.equal(await row('a3').locator('[data-select-item]').isChecked(), true, 'polling retains checked rows');
+  assert.equal(await row('a7').locator('[data-select-item]').isChecked(), false, 'new arrivals are not automatically selected');
+  assert.equal(await page.locator('#bulkSelectAll').evaluate(el => el.indeterminate), true);
+  await page.locator('#bulkToggle').click();
+  assert.equal(await page.locator('[data-select-item]').count(), 0);
+
+  await nav('records'); await page.locator('#noticeRange').selectOption('all');
+  await page.locator('#bulkToggle').click();
+  assert.equal(await row('a1').locator('[data-select-item]').isDisabled(), true, 'already archived rows cannot be archived twice');
+  await page.locator('[data-filter=archived]').click();
+  assert.equal(await page.locator('#bulkCount').textContent(), '已选 0 条');
+  assert.equal(await page.locator('#bulkApply').textContent(), '恢复所选');
+  await page.locator('#bulkSelectAll').check();
+  await page.locator('#bulkApply').click(); await archiveNotice();
+  assert.equal(bulkCalls.at(-1).archived, false);
+  assert.deepEqual(new Set(bulkCalls.at(-1).ids), new Set(['a1', 'a2', 'a4']));
+  assert.match(await page.locator('#bulkResultText').textContent(), /已恢复 3 条/);
+  for (const id of ['a1', 'a2', 'a4']) assert.equal(items.find(i => i.id === id).archived, false);
+
+  await nav('tasks'); await page.locator('#bulkToggle').click();
+  assert.equal(await row('a5').locator('[data-action=toggle-done]').count(), 0, 'multi-select cannot accidentally complete a task');
+  await row('a5').locator('[data-action=details]').click();
+  assert.equal(await row('a5').locator('[data-select-item]').isChecked(), true);
+  await page.locator('#bulkApply').click(); await archiveNotice();
+  assert.deepEqual(items.find(i => i.id === 'a5'), { ...original.find(i => i.id === 'a5'), archived: true });
+  await nav('notices'); await page.locator('#bulkToggle').click();
+  assert.match(await row('a6').locator('.notice-body').textContent(), /第三教学楼/);
+  await page.locator('#bulkSelectAll').check();
+  await page.locator('#bulkApply').click(); await archiveNotice();
+  assert.equal(items.find(i => i.id === 'a6').read, false);
+
+  await nav('review');
+  await page.setViewportSize({ width: 390, height: 844 });
+  const mobileActions = await row('a1').locator('.review-actions button').evaluateAll(els => els.map(el => el.getBoundingClientRect().top));
+  assert.equal(mobileActions[0], mobileActions[1]);
+  for (const entry of await page.locator('.review-entry').all()) {
+    assert.equal(await entry.evaluate(el => el.scrollWidth <= el.clientWidth), true);
+    assert.equal(await entry.evaluate(el => el.querySelector('.row-end').getBoundingClientRect().top >= el.querySelector('.item-open').getBoundingClientRect().bottom - 1), true, 'mobile controls do not overlap source text');
+  }
+  await page.screenshot({ path: 'artifacts/archive-review-mobile.png', fullPage: true });
+  await page.locator('#bulkToggle').click(); await row('a1').locator('[data-select-item]').check();
+  for (const width of [390, 320]) {
+    await page.setViewportSize({ width, height: 844 });
+    assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true, 'bulk controls fit narrow screens');
+    assert.equal(await page.locator('#bulkToolbar').evaluate(el => el.scrollWidth <= el.clientWidth), true);
+  }
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.screenshot({ path: 'artifacts/archive-bulk-mobile.png', fullPage: true });
+  await nav('tasks');
+  assert.equal(await page.locator('#bulkToolbar').isHidden(), true, 'switching views exits selection');
+  assert.deepEqual(errors, []);
+  console.log('Archive UI passed: archive beside confirm, single restore, scoped select-all, failure and retry, selection across polling, new arrivals, bulk restore, preserved tasks and notices, reload, and mobile. API/data mocked; no real records changed.');
+} finally { await browser.close(); }

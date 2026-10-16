@@ -1,0 +1,9 @@
+{
+  "repository": "https://github.com/tabler/tabler",
+  "package": "@tabler/core",
+  "version": "1.6.1",
+  "integrity": "sha512-lgmR9gcxRp5JlLxcmRi9Rz85JrEvH6Bz71KnlcPVSa97wtwQNjgSs3g3fxwbAlulHyRMghhIV04QUuW3pqDsIg==",
+  "cssSha256": "370a2d4e608ae518351d10528fc7dbe19b354ae5062c51b2a9cb294850d65403",
+  "licenseUrl": "https://raw.githubusercontent.com/tabler/tabler/4aef709014978884ad627dd5681a09bd45fec895/LICENSE",
+  "licenseSha256": "4f88a82d13be3c5c63a12c5631eae914aa4381b6dc17641bf1ab85f3f8f6c8a5"
+}

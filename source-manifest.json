@@ -1,0 +1,447 @@
+{
+  "name": "daymark",
+  "version": "0.1.0",
+  "generatedAt": "2026-10-16T09:34:51.645Z",
+  "files": [
+    {
+      "path": ".dockerignore",
+      "size": 307,
+      "sha256": "09602ebeaec9bd3549f8c8717fcb9bc416d0a075f56233c2e6ef21c1ef3ef3f1"
+    },
+    {
+      "path": ".editorconfig",
+      "size": 139,
+      "sha256": "0236baaa876eef2fbe3d4a9b01aac87d148b925fac3f58e1bc0cc9819ed88dab"
+    },
+    {
+      "path": ".env.example",
+      "size": 40,
+      "sha256": "7d1bc720a85d6ddff43f9d5752c75e60723be6f6e6bd7e80d65e7f98700dd736"
+    },
+    {
+      "path": ".gitattributes",
+      "size": 167,
+      "sha256": "04b76fc92c063038f553ac065aa93af2e361f92e1093481604395b3580ae77ef"
+    },
+    {
+      "path": ".github/ISSUE_TEMPLATE/bug_report.md",
+      "size": 525,
+      "sha256": "759e8dbbace54528e64ecd5a5574cf54c9f2e8569fe6b5b9bf510c759cb736d2"
+    },
+    {
+      "path": ".github/pull_request_template.md",
+      "size": 225,
+      "sha256": "d092b3d5cbe5a8a897fe6648fa5eee389ea85fc5a70682f7a072026508205f8b"
+    },
+    {
+      "path": ".github/workflows/ci.yml",
+      "size": 1348,
+      "sha256": "fd406402f3f49694aa042f5338ecc7bce8464c28debc70ab70389dc0f14927df"
+    },
+    {
+      "path": ".gitignore",
+      "size": 499,
+      "sha256": "f2a67329a533d837d7e99e90546c44d8a75f7e712ab328dd3c3faa8081742162"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "size": 837,
+      "sha256": "bfe8fc8a0adca7f71b945cf2f5704a7b66be432ef750b33828ee7a299ffe2161"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "size": 1909,
+      "sha256": "769df6158adec031fc1cc71f2d8c0b7ad7f6990ae50d80a820fe47097ec0e951"
+    },
+    {
+      "path": "Caddyfile.example",
+      "size": 69,
+      "sha256": "914019036d2db957b53490d060ebc4c29d25335b83b88d726413a39448d25930"
+    },
+    {
+      "path": "Dockerfile",
+      "size": 369,
+      "sha256": "14d166fad9a9105cf5cb0e40b61b0d4e8cf4d455deafc839f93101ec233fe38c"
+    },
+    {
+      "path": "LICENSE",
+      "size": 1077,
+      "sha256": "f9dac74b3f4313c1b1d0adeaee0e1d9085600a224f1908a25aaa6521990a38d6"
+    },
+    {
+      "path": "README.md",
+      "size": 6067,
+      "sha256": "f02a753f743b2185045e98c5b7f5eba7e07fd19f6babe0b6716457228818a21a"
+    },
+    {
+      "path": "SECURITY.md",
+      "size": 1225,
+      "sha256": "f60ca1318da8a0d95b73c37ffe563e41ff1777a0c1d721a69db7e8a3128895ad"
+    },
+    {
+      "path": "THIRD_PARTY_NOTICES.md",
+      "size": 2312,
+      "sha256": "b50c3413b412208371ac84b7f8de6a69c84db675b4f4a26a0694b55ee88f145c"
+    },
+    {
+      "path": "collector.config.example.json",
+      "size": 207,
+      "sha256": "66dd2b6f6660bbabd98e5d492ac56bf26e76df62aa962003633f269c60cf145c"
+    },
+    {
+      "path": "collector/accounts.mjs",
+      "size": 9075,
+      "sha256": "d2f39e3347c16b9842a62874660f3bfcbf7d2065725a62eee6883d3be055ffc0"
+    },
+    {
+      "path": "collector/chaoxing-browser.mjs",
+      "size": 7190,
+      "sha256": "69517ba076696553b9d4f96325b43c22189f45c8a026ba750d8e80366b6fb46f"
+    },
+    {
+      "path": "collector/chaoxing.mjs",
+      "size": 19090,
+      "sha256": "367c504380f2f0d6892585ccc1b11a302b5e5545b7c5a7a273c8c528839a59fa"
+    },
+    {
+      "path": "collector/chat-accounts.mjs",
+      "size": 32113,
+      "sha256": "4b1b938b2b9065984ab85823fdc5fbc5fbaf95ce063fbd7584142abaa7df246f"
+    },
+    {
+      "path": "collector/index.mjs",
+      "size": 6473,
+      "sha256": "6c9d89b90286d96bba94328913a3b09d75e8989d4a843d5542efe8466dd5d085"
+    },
+    {
+      "path": "collector/napcat.mjs",
+      "size": 9271,
+      "sha256": "e2cd0f71edf982d25b4e173d91a8a46096c9818430cc57a06a9d402be3afb140"
+    },
+    {
+      "path": "collector/onebot.mjs",
+      "size": 1957,
+      "sha256": "8ab395aeafa538c8eb17afb8b653410379515c23c79239129642b7fd39043287"
+    },
+    {
+      "path": "collector/qq-history.mjs",
+      "size": 3854,
+      "sha256": "a498b193988b32069babb27a9ebc87551c378e6ad6d8cfbbc209753d95e11960"
+    },
+    {
+      "path": "collector/wechat.mjs",
+      "size": 2828,
+      "sha256": "0cebb25b75f60ebe4d24d581a90450c9f143a3a19b209b764ad353d889251327"
+    },
+    {
+      "path": "collector/wechat_bridge.py",
+      "size": 10219,
+      "sha256": "c97a5d18f64cdb2d58facfcd6e240d9b5a8375f032ed00615c0af7b1f0005767"
+    },
+    {
+      "path": "collector/wechat_database.py",
+      "size": 19157,
+      "sha256": "196df31a5fd31400b4cf389b7189f12e1cc453c8d154f8073c2e4cdc223cef96"
+    },
+    {
+      "path": "collector/wechat_key.py",
+      "size": 5151,
+      "sha256": "5c0448192dbcc62ae2ed172c17985a86bda43909c254b64462848612d111aa37"
+    },
+    {
+      "path": "collector/wechat_login.py",
+      "size": 4789,
+      "sha256": "49455d5dff9399a1d817f2a55ad9cac29d3a0f5454a9ac5ebe613f94379049b9"
+    },
+    {
+      "path": "collector/wechat_vendor/LICENSE",
+      "size": 1065,
+      "sha256": "8ce1f596be018484e59315ae37c8fb397d4fddb05b2f6793af538f54c8e1a6ce"
+    },
+    {
+      "path": "collector/wechat_vendor/README.md",
+      "size": 306,
+      "sha256": "170131c4527857f9f1d4c417ee13c728dc14348a52529bb698bfc144699d7533"
+    },
+    {
+      "path": "collector/wechat_vendor/sha512-key.js",
+      "size": 3369,
+      "sha256": "6d39da4e0e9926a0eeb6dd882e2301304c397dc2eaefbaaf916977818b521aac"
+    },
+    {
+      "path": "collector/wechat_vendor/wal_snapshot.py",
+      "size": 4102,
+      "sha256": "efb021e64e4b561bd6f860faa69fffbd52d4851713389895d854776af342a72d"
+    },
+    {
+      "path": "collector/windows-vault.mjs",
+      "size": 1930,
+      "sha256": "4e2e69b944a3b0bb2de4d650e3c3ce665a4b9f2569d45795c9b93746dd4a72f6"
+    },
+    {
+      "path": "collector/worker.mjs",
+      "size": 3843,
+      "sha256": "8bd02fab6c5d0fbf5ad8fca8d4c1e6c94d0ca5bb310de8bf0cc0a3b27b39577b"
+    },
+    {
+      "path": "compose.yaml",
+      "size": 580,
+      "sha256": "9eec9d234403345df64cdf50750ba4ff238fa7be7e4b05fbf744be0dabdaab6f"
+    },
+    {
+      "path": "docs/github-research.md",
+      "size": 4152,
+      "sha256": "6e7dd54c35149c033f8ab7595063ecbd8886969d4852f2573a4ef31c6d851355"
+    },
+    {
+      "path": "docs/platform-setup.md",
+      "size": 7471,
+      "sha256": "497cfaceb8df5d260d661d9787f6d0d1daade4781ff6d40e55852e76cda5934b"
+    },
+    {
+      "path": "docs/product-redesign.md",
+      "size": 6031,
+      "sha256": "fe8e099528f2d69f10a69979459a2c74798bad9d255f414a61ff3d04d94c07b7"
+    },
+    {
+      "path": "docs/publishing.md",
+      "size": 3300,
+      "sha256": "43f1e055dbef2453a1816aa0c221a27421e8f84b6ce33bdba5e7b707e95bac6e"
+    },
+    {
+      "path": "docs/website-interfaces.md",
+      "size": 3796,
+      "sha256": "4463b729af815bf7f58e6a1007ee7fe4738242e4be653f99ce2285ba6e26fd6f"
+    },
+    {
+      "path": "docs/wechat-protocol-research.md",
+      "size": 6111,
+      "sha256": "b6e3d71b371de6264926b35314c0df64ed82da9905f3985137f62fab3cefb221"
+    },
+    {
+      "path": "package.json",
+      "size": 414,
+      "sha256": "49f456a1bde9de059b9dcc1c5d770943791d9efe68864f7dd3fae9fdcf500783"
+    },
+    {
+      "path": "public/app.js",
+      "size": 47345,
+      "sha256": "b1a6a7d05ffe36be77afb32163740265e392c3f60bdd23f5b3240c0ed39c0b57"
+    },
+    {
+      "path": "public/chat.js",
+      "size": 21822,
+      "sha256": "9cae8e2bad9d195a0440b64480b1f74b0c5a25017df41e8d66919457cca02609"
+    },
+    {
+      "path": "public/icon.svg",
+      "size": 356,
+      "sha256": "c07445d09ea94a31882293506ea91c1b7a60fc5db465fcb3020ec7d1a6f0bdf2"
+    },
+    {
+      "path": "public/index.html",
+      "size": 19024,
+      "sha256": "f6807ef840aacb34d5b44b31e31debbb9af31e1503dc6e08db2ec682ed55cc60"
+    },
+    {
+      "path": "public/manifest.webmanifest",
+      "size": 300,
+      "sha256": "e458fbd979ae1a0605fc8fa41787a25c2f07381006c9883eac4fd144fed4c459"
+    },
+    {
+      "path": "public/styles.css",
+      "size": 25067,
+      "sha256": "2ffd9cbb140c35aba36faad9d6a9494f36ea37dd9770fa52b0e762b664b88645"
+    },
+    {
+      "path": "public/vendor/tabler/LICENSE",
+      "size": 1090,
+      "sha256": "4f88a82d13be3c5c63a12c5631eae914aa4381b6dc17641bf1ab85f3f8f6c8a5"
+    },
+    {
+      "path": "public/vendor/tabler/SOURCE.json",
+      "size": 506,
+      "sha256": "6efed845153eda3df19f5be6a2cfdf930b97186969d1665f777d4b37cab34e58"
+    },
+    {
+      "path": "public/vendor/tabler/tabler.min.css",
+      "size": 635394,
+      "sha256": "370a2d4e608ae518351d10528fc7dbe19b354ae5062c51b2a9cb294850d65403"
+    },
+    {
+      "path": "public/workspace.css",
+      "size": 28322,
+      "sha256": "c77c4cbe221b09adedb41bc6973f33936fe88d784c3400d7f28e155d7d5a85ec"
+    },
+    {
+      "path": "server.mjs",
+      "size": 20772,
+      "sha256": "b17159d1f9f5e2c91a7cd727fa98e6fc6aafbfe6a6f63258af15a3ce576bd867"
+    },
+    {
+      "path": "shared/chat-triage.mjs",
+      "size": 10140,
+      "sha256": "572874450e5ca8157da30ef3cc217e571d65ae9bb6d0160e12516ddf6020baf5"
+    },
+    {
+      "path": "shared/events.mjs",
+      "size": 3417,
+      "sha256": "1b2c1cc7da291fc10440007c7853c9ad86eadadaf5aa0d6d7c7501572cc4d75a"
+    },
+    {
+      "path": "shared/learning-relevance.mjs",
+      "size": 4006,
+      "sha256": "7624377e12d24c0312aa2cba8d4b3e4c72d8b28b3eb6f20add4f29fc1b9d31a6"
+    },
+    {
+      "path": "shared/runtime.mjs",
+      "size": 1439,
+      "sha256": "11298d41905def58325df0207ba897810703a2d116f734c052a55538f4d1bf1d"
+    },
+    {
+      "path": "test/auto-groups.test.mjs",
+      "size": 6510,
+      "sha256": "74d426e2508fd11d79f6efb6746e3ec8adbf4a56babd917c0e3f21c4dc6dde14"
+    },
+    {
+      "path": "test/chaoxing.test.mjs",
+      "size": 13447,
+      "sha256": "f3f2f7dfb85868a4a8238dcbed84b9cec1b27b415913a4b35e31e9e3780a482a"
+    },
+    {
+      "path": "test/chat-accounts.test.mjs",
+      "size": 10278,
+      "sha256": "f757ef9c6e81c53d3c754c25bab3f557c13ea3e9219ee8812412566b7d8a39f8"
+    },
+    {
+      "path": "test/chat-history-concurrency.test.mjs",
+      "size": 2433,
+      "sha256": "6bb01e9f3580ce36be4a89c06a02fc0f65be121fc2232c7ef90592f341e065c6"
+    },
+    {
+      "path": "test/chat-triage.test.mjs",
+      "size": 8664,
+      "sha256": "678b48f3ca30754c49e2698414fa7158d32a24ed64ff5a72324d07d00d256aa4"
+    },
+    {
+      "path": "test/events.test.mjs",
+      "size": 2376,
+      "sha256": "2cffdf5e940af2b1d115c6d3359b8408ed964f38fef295ec8a87777701ca30e1"
+    },
+    {
+      "path": "test/qq-history.test.mjs",
+      "size": 3472,
+      "sha256": "e9be3d8f13b60f0a8c3ae5ef2c5ca4e08f42cba1d13e010de020d12ea54c1a97"
+    },
+    {
+      "path": "test/release.test.mjs",
+      "size": 4398,
+      "sha256": "02d84a7181efaf2c6fec1f569d80f498cff6cae173a8cdce5e75b4321987a3b6"
+    },
+    {
+      "path": "test/runtime.test.mjs",
+      "size": 1892,
+      "sha256": "902242a05cb71d5106a573154a095e2b3155ccd081c349b8101054393c9dcd61"
+    },
+    {
+      "path": "test/server.test.mjs",
+      "size": 28785,
+      "sha256": "840a500202b96b0569921417eb5ebf45e06cd7e4b14e369b294e6629897cd8fd"
+    },
+    {
+      "path": "test/wechat-database.test.mjs",
+      "size": 7866,
+      "sha256": "2a2e23d214b37299a827b402b079d915b643d27bd1dd8f3890b129b135eb9f6d"
+    },
+    {
+      "path": "test/worker.test.mjs",
+      "size": 2864,
+      "sha256": "26b0d145b49c94ca55b1d62b6791147e98693bb25b589fd3995d6d798f808167"
+    },
+    {
+      "path": "tools/archive-ui-check.mjs",
+      "size": 10052,
+      "sha256": "11717f23faad864ee69e45e1f7500688f17ec5a0b538f60f9f408bde6e67450e"
+    },
+    {
+      "path": "tools/browser-check.mjs",
+      "size": 173,
+      "sha256": "2664d440b947d4341c32f20a3f05275c2ff137d53d7343eefbebdee54af52900"
+    },
+    {
+      "path": "tools/chat-ui-check.mjs",
+      "size": 15430,
+      "sha256": "5ad871dab1c779a301fe44dfe8374f367d517fdc588e96fe8a3de44bc0b49070"
+    },
+    {
+      "path": "tools/check-chat-login.mjs",
+      "size": 3062,
+      "sha256": "2718df26bc45d2e5f4b7e0dd9d23a3b1d7af27819a2a4cc48ea18bc0e150e9af"
+    },
+    {
+      "path": "tools/check-wechat-database.py",
+      "size": 7761,
+      "sha256": "74a1ff637707c4de11e42ce5d725cb5383c4b08aee8c4ae7a0b8f498ede8dcb8"
+    },
+    {
+      "path": "tools/check-wechat-detection.py",
+      "size": 1005,
+      "sha256": "b74d6e4c88af058e6a9f077267a76715c8094e9175dfc4fe8dd86b9b7cf83a3f"
+    },
+    {
+      "path": "tools/feedback-browser-check.mjs",
+      "size": 9751,
+      "sha256": "4027ae1f35f72b605504189acb0756080157cd291ee8f67976e44767c61f07a5"
+    },
+    {
+      "path": "tools/followup-ui-check.mjs",
+      "size": 9649,
+      "sha256": "65c8f934ddfc90a12e7c993e11afab76604c35aad5f6754bdcca09086e303f93"
+    },
+    {
+      "path": "tools/prepare-release.ps1",
+      "size": 1354,
+      "sha256": "b01c4d149005dfc66d4a99f070452fa7acdd98f60bdc37bfa651f7725176f05e"
+    },
+    {
+      "path": "tools/probe-windows-ocr.ps1",
+      "size": 2476,
+      "sha256": "f6c2b509db32ed741f875a8167479ae03eca33d5cf28492e1ccfeda5ec8a5f25"
+    },
+    {
+      "path": "tools/release-check.mjs",
+      "size": 9221,
+      "sha256": "603906277cffdcaebcfff3897d91e394960b8c25f9c4d62cf0a93920421515f1"
+    },
+    {
+      "path": "tools/setup-chat.ps1",
+      "size": 3039,
+      "sha256": "81a6543864d053fb144aebb20efa2dc0c1112855462ac558df02ef92f4beef49"
+    },
+    {
+      "path": "tools/triage-ui-check.mjs",
+      "size": 6571,
+      "sha256": "64fc96af6d68d29c0151aa6eb40fea23d90a37074a4bb8d9a097fcc5cfe224ae"
+    },
+    {
+      "path": "tools/ui-test-support.mjs",
+      "size": 431,
+      "sha256": "679609cca459bc25554ec21f347dac754f76baec0dd2c3ee1d9c9ac600cbb4a1"
+    },
+    {
+      "path": "tools/workspace-ui-check.mjs",
+      "size": 10356,
+      "sha256": "689c631918d611d2625ab58ac0993f7f7ed36a9806de42c77b26eb1562a4632d"
+    },
+    {
+      "path": "vendor/NapCat.LICENSE",
+      "size": 1199,
+      "sha256": "2bbc0dba0c62fcde4adfe38ebadad0b7d4e23b06b88d9551904bbe07769dc46f"
+    },
+    {
+      "path": "vendor/README.md",
+      "size": 1916,
+      "sha256": "b86347b43135d7880683abb7bfa4fe4f6bf31fed579bde8e28ead20c8affbc8c"
+    }
+  ]
+}
